@@ -8,6 +8,7 @@ public class SequenceFinder {
 
     public String findMax(SequenceSource source) throws Exception {
         final List<String> sequences = extractSequence(source);
+        final Set<String> visited = new HashSet<>();
         String max = "";
         if (!sequences.isEmpty()) {
             final StringBuilder builder = new StringBuilder();
@@ -17,18 +18,22 @@ public class SequenceFinder {
                     break;
                 }
                 for (int j = 0; j < sequences.size(); j++) {
-                    if (i == j) continue;
                     String s2 = sequences.get(j);
+                    if (i == j || visited.contains(s2)) continue;
+
                     if (isAfter(builder, s2)) {
                         builder.insert(0, s2.substring(0, SEQUENCE_LEN - 2));
+                        visited.add(s2);
                     } else if (isBefore(builder, s2)) {
                         builder.append(s2.substring(2));
+                        visited.add(s2);
                     }
                 }
                 if (builder.length() > max.length()) {
                     max = builder.toString();
                 }
                 builder.setLength(0);
+                visited.clear();
             }
         }
         return max;
